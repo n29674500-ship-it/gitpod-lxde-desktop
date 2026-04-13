@@ -1,0 +1,36 @@
+image: gitpod/workspace-full
+
+tasks:
+  - name: Install LXDE Desktop
+    init: |
+      sudo apt update
+      sudo apt install -y lxde-core lxde-common tightvncserver firefox
+    command: |
+      # Set VNC password (only first time; comment out later if you want)
+      if [ ! -f ~/.vnc/passwd ]; then
+        echo "gitpod" | vncpasswd -f > ~/.vnc/passwd
+        chmod 600 ~/.vnc/passwd
+      fi
+
+      # Create basic xstartup for LXDE
+      mkdir -p ~/.vnc
+      cat > ~/.vnc/xstartup << 'EOF'
+#!/bin/sh
+xrdb $HOME/.Xresources
+startlxde &
+EOF
+      chmod +x ~/.vnc/xstartup
+
+      # Start VNC server on display :1
+      tightvncserver :1
+
+ports:
+  - port: 5901
+    onOpen: open-preview
+    visibility: public
+
+vscode:
+  extensions:
+    - ms-python.python
+    - ms-toolsai.jupyter
+    - ms-vscode.cpptools
